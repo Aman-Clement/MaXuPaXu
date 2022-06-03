@@ -1,0 +1,1 @@
+{"name":"MaXuPaXu-bot","version":"1.0.0","description":"Im a smurf","main":"bot.js","author":"Aman Clement","dependencies":{"axios":"^0.27.2","discord.io":"https://github.com/woor/discord.io/tarball/gateway_v6","discord.js":"^13.7.0","dotenv":"^16.0.1","node-fetch":"^3.2.5","server":"^1.0.37","winston":"^3.7.2"}}
