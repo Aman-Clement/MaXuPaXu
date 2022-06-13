@@ -1,53 +1,35 @@
 
-const keepAlive=require("server")
+const keepAlive=require("./server")
+const voice=require("@discordjs/voice")
+const inspir=require('./inspire')
+const bulli=require('./bully.js')
+const cb=require('./chatbot.js')
+const quote=require('./quotes.js')
 require('dotenv').config();
 const { Client, Intents, DiscordAPIError } = require('discord.js');
 const Discord = require('discord.js');
-const bot = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const axios=require("axios")
+const bot = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
+const mySecret = process.env['TOKEN']
 // const TOKEN=auth.json
-
-const targets=['sad','unhappy','angry','hopeless','miserable','guilt']
-
-
-// bot.on('ready', () => {
-  //         logger.info('Connected');
-//         logger.info('Logged in as: ');
-//         logger.info(bot.username + ' - (' + bot.id + ')');
-// });
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}`);
 });
+bot.on('messageCreate',msg=>{inspir.react(msg)})
 
-function inspire(msg,foundword){
-  axios.get('https://type.fit/api/quotes')
-  .then(response =>{
-    const randomquote=response.data[Math.floor(Math.random() * response.data.length)];
-    msg.reply(`dont be ${foundword}\n${randomquote.author} once said:\n${randomquote.text}`)
-  });
-}
+bot.on("voiceStateUpdate", (oldVoiceState,newVoiceState) => {
+  console.log("bully")
+    bulli.bully(oldVoiceState,newVoiceState,bot)// Listeing to the voiceStateUpdate event
+});
 
+bot.on('messageCreate',msg=>{quote.sdquotes(msg)})
 
-bot.on('messageCreate',msg=>{
-  if(msg.author.bot)
-  return
-  const foundword=targets.find((target) => msg.content.toLowerCase().includes(target))
-  if(foundword){
-    console.log(`found the word ${foundword}`);
-    inspire(msg,foundword)
-  }
-  if(msg.content.toLowerCase().includes("$inspire")){
-    inspire(msg,foundword)
-  }
-  if(msg.content.toLowerCase() == "Hello"){
-    msg.reply("Wassup?");
-  }
-  
-  keepAlive();
-  bot.login("TOKEN");
-})
+// bot.on('messageCreate',msg=>{cb.chat(msg)})
+
 // Just add any case commands if you want to..
+keepAlive();
+bot.login(mySecret);
 
 
+ 
 
